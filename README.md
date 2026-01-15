@@ -1,104 +1,83 @@
 
 Monitoramento de Sensores DHT11 e Corrente AC com Arduino
 
-Este projeto consiste em um sistema de monitoramento ambiental e de consumo elétrico desenvolvido para o Departamento de Física da Universidade Federal do Ceará (UFC). O software realiza a leitura de 9 sensores de temperatura e umidade (DHT11) e 3 sensores de corrente para ar-condicionado, exibindo os dados em um display LCD e transmitindo-os via protocolo MQTT para integração com sistemas de automação como o Home Assistant.
+Este projeto consiste em um sistema robusto de monitoramento ambiental e de consumo elétrico desenvolvido para o Departamento de Física da Universidade Federal do Ceará (UFC). O software realiza a leitura de múltiplos sensores de temperatura/umidade e corrente, integrando os dados localmente via Display LCD e remotamente via protocolo MQTT.
 🚀 Funcionalidades
 
-    Monitoramento Multissensorial: Leitura simultânea de 9 sensores DHT11 .
+    Monitoramento Ambiental: Leitura de 9 sensores DHT11 distribuídos pelo ambiente.
 
-    Cálculo de Médias: Processamento em tempo real da média de temperatura e umidade, ignorando leituras falhas (NaN) .
+    Gestão de Energia: Monitoramento de corrente de 3 unidades de ar-condicionado usando sensores SCT.
 
-    Medição de Corrente: Monitoramento de 3 unidades de ar-condicionado através de sensores SCT-013 (EmonLib).
+    Cálculo de Médias: Algoritmo para calcular a média de temperatura e umidade, filtrando automaticamente leituras inválidas (NaN).
 
-    Interface Local: Exibição de status de rede, IP, data/hora e valores dos sensores em um Display LCD 20x4 I2C .
+    Interface I2C: Exibição dinâmica de dados em um Display LCD 20x4, alternando entre telas de status de rede e dados dos sensores.
 
-    Conectividade IoT: Publicação de dados em formato JSON via MQTT .
+    Integração IoT: Envio de dados em formato JSON para um Broker MQTT.
 
-    Sincronização de Tempo: Atualização de data e hora via servidor NTP.
+    Sincronização Temporal: Uso de NTP (Network Time Protocol) para manter data e hora atualizadas via rede.
 
-🛠️ Hardware Necessário
+🛠️ Hardware Utilizado
 
-    Microcontrolador: Arduino (compatível com Shield Ethernet).
+    Microcontrolador: Arduino Mega (ou similar com suporte a múltiplos pinos analógicos).
 
-    Módulo de Rede: Shield Ethernet (UIPEthernet).
+    Conectividade: Shield Ethernet (UIPEthernet).
 
-    Sensores de Ambiente: 9x DHT11.
+    Sensores:
 
-    Sensores de Corrente: 3x Sensores de corrente (ex: SCT-013) conectados aos pinos A13, A14 e A15.
+        9x Sensores de Temperatura e Umidade DHT11.
 
-    Display: LCD 20x4 com módulo I2C (Endereço 0x27).
+        3x Sensores de Corrente Não Invasivo (SCT-013).
 
-📦 Bibliotecas Utilizadas
+    Display: LCD 20x4 com adaptador I2C (Endereço 0x27).
 
-As seguintes bibliotecas devem ser instaladas no seu Arduino IDE:
+📋 Pinagem Sugerida
+Componente	Pino Arduino
+Sensores DHT11 (1 a 9)	
 
-    UIPEthernet.h: Controle do módulo Ethernet.
+A0 até A8
+Corrente Ar 1	
 
-    DHT.h: Leitura dos sensores de temperatura e umidade.
+A13
+Corrente Ar 2	
 
-    NTPClient.h: Sincronização de horário via rede.
+A14
+Corrente Ar 3	
 
-    PubSubClient.h: Cliente MQTT para publicação de dados.
+A15
+Ethernet CS	
 
-    ArduinoJson.h: Manipulação e criação de objetos JSON.
+53
+💻 Configurações de Software
 
-    EmonLib.h: Cálculos de energia e corrente AC.
+O código utiliza bibliotecas essenciais para comunicação e processamento de dados:
 
-    LiquidCrystal_I2C.h: Controle do display via protocolo I2C.
+    Rede: Define um endereço MAC estático e busca IP via DHCP.
 
-🔧 Configuração e Instalação
-1. Conexões de Pinos
+    MQTT: Conecta-se a um Broker na porta 1883 com autenticação de usuário.
 
-    Sensores DHT11: Pinos analógicos de A0 a A8.
+    JSON: Organiza as leituras em objetos dataTemp, dataUmid e dataAC antes do envio.
 
-    Sensores de Corrente: Pinos A13, A14 e A15.
+Estrutura de Tópicos MQTT
 
-    Ethernet Shield: Pino CS configurado no 53.
+    sensores/ArduinoDHT11AC/Temp
 
-2. Configuração de Rede e MQTT
+    sensores/ArduinoDHT11AC/Umid
 
-No código, localize e altere as variáveis de rede para o seu ambiente:
-C++
+    sensores/ArduinoDHT11AC/AC 
 
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED}; // Endereço MAC [cite: 3]
-const char* mqtt_server ="BOKER MQTT HOST";       // Endereço do seu Broker [cite: 4]
-const char* mqtt_user = "mqtt_user";              // Usuário MQTT [cite: 4]
-const char* mqtt_password = "mqtt_user";          // Senha MQTT [cite: 4]
+🔧 Como Usar
 
-3. Tópicos MQTT
+    Instale as bibliotecas listadas no cabeçalho do código (UIPEthernet, DHT, NTPClient, PubSubClient, ArduinoJson, EmonLib).
 
-O sistema publica dados nos seguintes tópicos:
+    Atualize as variáveis mqtt_server, mqtt_user e mqtt_password com as credenciais do seu Broker.
 
-    sensores/ArduinoDHT11AC/Temp: Dados de temperatura.
+    Carregue o código no seu Arduino.
 
-    sensores/ArduinoDHT11AC/Umid: Dados de umidade.
+    Acompanhe o status de conexão diretamente no display LCD.
 
-    sensores/ArduinoDHT11AC/AC: Consumo dos ares-condicionados.
+Autor: Sergio Levy Nobre dos Santos
 
-📊 Estrutura dos Dados (JSON)
-
-Os dados são enviados no seguinte formato:
-
-Temperatura:
-JSON
-
-{
-  "Temp1": 25.5, ..., "Temp9": 26.0,
-  "MeanValueTemp": 25.8
-}
-
-Ar-Condicionado (Corrente):
-JSON
-
-{
-  "Ar1": 12.5,
-  "Ar2": 0.0,
-  "Ar3": 11.2
-}
-
-📝 Autor
-
-    Sergio Levy Nobre dos Santos - Departamento de Física - UFC
+Instituição: Universidade Federal do Ceará (UFC)
 
 
 
