@@ -1,83 +1,67 @@
 
-Monitoramento de Sensores DHT11 e Corrente AC com Arduino
+# Sistema de Monitoramento de Climatização e Energia - UFC
 
-Este projeto consiste em um sistema robusto de monitoramento ambiental e de consumo elétrico desenvolvido para o Departamento de Física da Universidade Federal do Ceará (UFC). O software realiza a leitura de múltiplos sensores de temperatura/umidade e corrente, integrando os dados localmente via Display LCD e remotamente via protocolo MQTT.
-🚀 Funcionalidades
+[cite_start]Este projeto consiste em um sistema de monitoramento ambiental e de consumo elétrico desenvolvido para o **Departamento de Física da Universidade Federal do Ceará (UFC)**. [cite_start]O software utiliza um Arduino para realizar a leitura de múltiplos sensores de temperatura/umidade e sensores de corrente AC, transmitindo os dados via protocolo MQTT e exibindo-os em uma interface local via LCD[cite: 15, 30, 39].
 
-    Monitoramento Ambiental: Leitura de 9 sensores DHT11 distribuídos pelo ambiente.
+## 🚀 Funcionalidades
 
-    Gestão de Energia: Monitoramento de corrente de 3 unidades de ar-condicionado usando sensores SCT.
+* [cite_start]**Monitoramento Ambiental Robusto**: Leitura de 9 sensores DHT11 para uma cobertura ampla da área[cite: 8, 49, 54].
+* [cite_start]**Cálculo de Média Inteligente**: O sistema calcula automaticamente a média de temperatura e umidade, filtrando sensores que apresentem erro de leitura (NaN)[cite: 58, 59, 60].
+* [cite_start]**Medição de Consumo AC**: Monitoramento de 3 unidades de ar-condicionado através de sensores de corrente (EmonLib)[cite: 11, 29].
+* [cite_start]**Integração IoT (MQTT)**: Publicação dos dados em formato JSON em tópicos específicos para integração com brokers externos ou Home Assistant[cite: 3, 15, 61, 62].
+* [cite_start]**Interface LCD Dinâmica**: Exibição alternada de informações de rede (IP e Status MQTT), data/hora e valores lidos dos sensores[cite: 30, 36, 38].
+* [cite_start]**Sincronização NTP**: Atualização automática de horário via servidor NTP (a.st1.ntp.br) com ajuste de fuso horário[cite: 22, 52].
 
-    Cálculo de Médias: Algoritmo para calcular a média de temperatura e umidade, filtrando automaticamente leituras inválidas (NaN).
+## 🛠️ Hardware Necessário
 
-    Interface I2C: Exibição dinâmica de dados em um Display LCD 20x4, alternando entre telas de status de rede e dados dos sensores.
+* [cite_start]**Microcontrolador**: Arduino (compatível com Shield Ethernet)[cite: 2, 39].
+* [cite_start]**Comunicação**: Módulo Ethernet W5100/ENC28J60 (Biblioteca UIPEthernet)[cite: 2].
+* [cite_start]**Sensores de Ambiente**: 9x DHT11[cite: 7, 8].
+* [cite_start]**Sensores de Corrente**: 3x Sensores (SCT-013 ou similar)[cite: 5, 11].
+* [cite_start]**Display**: LCD 20x4 I2C (Endereço 0x27)[cite: 12, 13].
 
-    Integração IoT: Envio de dados em formato JSON para um Broker MQTT.
+## 📌 Pinagem e Conexões
 
-    Sincronização Temporal: Uso de NTP (Network Time Protocol) para manter data e hora atualizadas via rede.
+### Sensores DHT11 (Pinos Analógicos)
+| Sensor | Pino | Sensor | Pino | Sensor | Pino |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Sensor 1 | [cite_start]A0 [cite: 5] | Sensor 4 | [cite_start]A3 [cite: 5] | Sensor 7 | [cite_start]A6 [cite: 5] |
+| Sensor 2 | [cite_start]A1 [cite: 5] | Sensor 5 | [cite_start]A4 [cite: 5] | Sensor 8 | [cite_start]A7 [cite: 5] |
+| Sensor 3 | [cite_start]A2 [cite: 5] | Sensor 6 | [cite_start]A5 [cite: 5] | Sensor 9 | [cite_start]A8 [cite: 5] |
 
-🛠️ Hardware Utilizado
+### Monitoramento de Corrente (AC)
+* [cite_start]**Ar 1**: Pino A13[cite: 5].
+* [cite_start]**Ar 2**: Pino A14[cite: 6].
+* [cite_start]**Ar 3**: Pino A15[cite: 6].
 
-    Microcontrolador: Arduino Mega (ou similar com suporte a múltiplos pinos analógicos).
+### Comunicação e Display
+* [cite_start]**Ethernet CS**: Pino 53[cite: 39].
+* [cite_start]**Display I2C**: Pinos SDA/SCL padrão do Arduino[cite: 13].
 
-    Conectividade: Shield Ethernet (UIPEthernet).
+## 📦 Bibliotecas Requeridas
 
-    Sensores:
+As seguintes bibliotecas são necessárias para a compilação do projeto:
 
-        9x Sensores de Temperatura e Umidade DHT11.
+1.  [cite_start]`UIPEthernet` [cite: 2]
+2.  [cite_start]`DHT` (Adafruit) [cite: 2]
+3.  [cite_start]`PubSubClient` [cite: 2]
+4.  [cite_start]`ArduinoJson` [cite: 2, 14]
+5.  [cite_start]`EmonLib` [cite: 2, 11]
+6.  [cite_start]`LiquidCrystal_I2C` [cite: 2]
+7.  [cite_start]`NTPClient` e `TimeLib` [cite: 2]
 
-        3x Sensores de Corrente Não Invasivo (SCT-013).
+## 🔧 Configuração de Software
 
-    Display: LCD 20x4 com adaptador I2C (Endereço 0x27).
+No arquivo principal, certifique-se de configurar as credenciais da sua rede e do Broker MQTT:
 
-📋 Pinagem Sugerida
-Componente	Pino Arduino
-Sensores DHT11 (1 a 9)	
+```cpp
+// Configuração de Rede
+byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED}; [cite_start]// [cite: 2]
 
-A0 até A8
-Corrente Ar 1	
-
-A13
-Corrente Ar 2	
-
-A14
-Corrente Ar 3	
-
-A15
-Ethernet CS	
-
-53
-💻 Configurações de Software
-
-O código utiliza bibliotecas essenciais para comunicação e processamento de dados:
-
-    Rede: Define um endereço MAC estático e busca IP via DHCP.
-
-    MQTT: Conecta-se a um Broker na porta 1883 com autenticação de usuário.
-
-    JSON: Organiza as leituras em objetos dataTemp, dataUmid e dataAC antes do envio.
-
-Estrutura de Tópicos MQTT
-
-    sensores/ArduinoDHT11AC/Temp
-
-    sensores/ArduinoDHT11AC/Umid
-
-    sensores/ArduinoDHT11AC/AC 
-
-🔧 Como Usar
-
-    Instale as bibliotecas listadas no cabeçalho do código (UIPEthernet, DHT, NTPClient, PubSubClient, ArduinoJson, EmonLib).
-
-    Atualize as variáveis mqtt_server, mqtt_user e mqtt_password com as credenciais do seu Broker.
-
-    Carregue o código no seu Arduino.
-
-    Acompanhe o status de conexão diretamente no display LCD.
-
-Autor: Sergio Levy Nobre dos Santos
-
-Instituição: Universidade Federal do Ceará (UFC)
+// Configuração MQTT
+const char* mqtt_server ="SEU_BROKER_IP"; // [cite: 3]
+const char* mqtt_user = "seu_usuario"; [cite_start]// [cite: 3]
+const char* mqtt_password = "sua_senha"; [cite_start]// [cite: 4]
 
 
 
