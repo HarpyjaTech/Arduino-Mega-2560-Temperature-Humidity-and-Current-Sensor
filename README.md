@@ -1,6 +1,8 @@
 
 # Sistema de Monitoramento de Climatização e Energia - UFC
 
+<a href="https://buymeacoffee.com/hapyjatech" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 Este projeto consiste em um sistema de monitoramento ambiental e de consumo elétrico desenvolvido para o **Departamento de Física da Universidade Federal do Ceará (UFC)**. O software realiza a leitura de 9 sensores de temperatura e umidade (DHT11) e 3 sensores de corrente para ar-condicionado, exibindo os dados em um display LCD e transmitindo-os via protocolo MQTT.
 
 ## 🚀 Funcionalidades
