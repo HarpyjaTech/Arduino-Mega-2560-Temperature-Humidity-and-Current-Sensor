@@ -1,0 +1,72 @@
+# Exemplo de painel (view) para o Home Assistant.
+#
+# Como usar: Painéis → abra o painel → ✏️ Editar → ⋮ → Editor YAML (bruto) e adicione este
+# bloco dentro de "views:".
+#
+# As entidades são criadas automaticamente pelo MQTT Discovery do firmware. Os IDs abaixo são
+# os que o Home Assistant gera a partir do nome do dispositivo ("Monitor Climatizacao UFC") e do
+# nome de cada entidade. Se algum não aparecer, confira em
+# Configurações → Dispositivos e serviços → MQTT → Monitor Climatizacao UFC.
+
+title: Climatização
+path: climatizacao
+cards:
+  - type: glance
+    title: Ambiente
+    entities:
+      - entity: sensor.monitor_climatizacao_ufc_temperatura_media
+        name: Temperatura
+      - entity: sensor.monitor_climatizacao_ufc_umidade_media
+        name: Umidade
+      - entity: binary_sensor.monitor_climatizacao_ufc_temperatura_alta
+        name: Alerta
+      - entity: sensor.monitor_climatizacao_ufc_sensores_dht_ok
+        name: Sensores OK
+
+  - type: history-graph
+    title: Últimas 24 horas
+    hours_to_show: 24
+    entities:
+      - entity: sensor.monitor_climatizacao_ufc_temperatura_media
+        name: Temperatura média
+      - entity: sensor.monitor_climatizacao_ufc_umidade_media
+        name: Umidade média
+
+  - type: entities
+    title: Ar-condicionado
+    entities:
+      - entity: binary_sensor.monitor_climatizacao_ufc_ar_1_ligado
+        name: Ar 1
+      - entity: sensor.monitor_climatizacao_ufc_ar_1_potencia
+        name: Ar 1 potência
+      - entity: binary_sensor.monitor_climatizacao_ufc_ar_2_ligado
+        name: Ar 2
+      - entity: sensor.monitor_climatizacao_ufc_ar_2_potencia
+        name: Ar 2 potência
+      - entity: binary_sensor.monitor_climatizacao_ufc_ar_3_ligado
+        name: Ar 3
+      - entity: sensor.monitor_climatizacao_ufc_ar_3_potencia
+        name: Ar 3 potência
+      - entity: sensor.monitor_climatizacao_ufc_potencia_total
+        name: Potência total
+
+  - type: statistics-graph
+    title: Consumo diário (kWh)
+    chart_type: bar
+    period: day
+    days_to_show: 14
+    stat_types:
+      - change
+    entities:
+      - entity: sensor.monitor_climatizacao_ufc_ar_1_energia
+        name: Ar 1
+      - entity: sensor.monitor_climatizacao_ufc_ar_2_energia
+        name: Ar 2
+      - entity: sensor.monitor_climatizacao_ufc_ar_3_energia
+        name: Ar 3
+
+  - type: entities
+    title: Configuração
+    entities:
+      - entity: number.monitor_climatizacao_ufc_limite_de_temperatura
+        name: Limite de temperatura
