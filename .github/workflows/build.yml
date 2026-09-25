@@ -1,0 +1,35 @@
+name: Compilar firmware
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  arduino-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: arduino/setup-arduino-cli@v2
+
+      - name: Instalar core AVR
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr@1.8.6
+
+      - name: Instalar bibliotecas
+        run: |
+          arduino-cli lib install \
+            "UIPEthernet@2.0.12" \
+            "DHT sensor library@1.4.6" \
+            "Adafruit Unified Sensor@1.1.14" \
+            "NTPClient@3.2.1" \
+            "Time@1.6.1" \
+            "LiquidCrystal I2C@1.1.2" \
+            "PubSubClient@2.8" \
+            "ArduinoJson@7.4.2" \
+            "EmonLib@1.1.0"
+
+      # Sem firmware/secrets.h o sketch usa as credenciais de exemplo (secrets.example.h)
+      - name: Compilar para Arduino Mega 2560
+        run: arduino-cli compile --fqbn arduino:avr:mega --warnings default firmware
