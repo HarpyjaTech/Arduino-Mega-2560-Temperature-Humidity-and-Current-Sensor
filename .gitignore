@@ -1,0 +1,10 @@
+# Credenciais locais (use firmware/secrets.example.h como modelo)
+firmware/secrets.h
+
+# Builds
+build/
+.pio/
+.vscode/
+*.hex
+*.elf
+*.bin
